@@ -18,7 +18,8 @@ playerX_change=0
 enemyImg=pygame.image.load("enemy.png")
 enemyX=370
 enemyY=50
-enemyX_change=0
+enemyX_change=0.3
+enemyY_change=40
 
 def player(x,y):
     screen.blit(playerImg,(x,y))
@@ -44,6 +45,20 @@ while running:
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 playerX_change = 0
+
+
+    #enemy movement
+    enemyX += enemyX_change
+
+    if enemyX <=0 :
+        enemyX=0
+        enemyX_change =0.3
+        enemyY += enemyY_change
+    if enemyX >= 736 :
+        enemyX=736
+        enemyX_change = -0.3
+        enemyY += enemyY_change
+
 
     #Check Boundaries
     if playerX <=0 :
