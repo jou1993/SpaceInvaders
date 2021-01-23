@@ -1,7 +1,11 @@
 import  pygame,sys
 
+pygame.init()
 # Create the screen
 screen=pygame.display.set_mode((800,600))
+
+#Background image
+backgroundImg=pygame.image.load("3d-space-scene.jpg")
 
 #Set Icon and Title
 pygame.display.set_caption("Space Invaders")
@@ -21,17 +25,30 @@ enemyY=50
 enemyX_change=0.3
 enemyY_change=40
 
+#bullet 
+bulletImg=pygame.image.load("bullet.png")
+bulletX=370
+bulletY=480
+bulletX_change=0
+bulletY_change=1
+bullet_state= "ready"
+
 def player(x,y):
     screen.blit(playerImg,(x,y))
 def enemy(x,y):
     screen.blit(enemyImg,(x,y))
-
+def fire_bullet(x,y):
+    global bullet_state
+    bullet_state = "fire"
+    screen.blit(bulletImg, (x + 16, y + 10))
 
 
 #Game Loop
 running=True
 while running:
     screen.fill(((0,0,0)))
+    #background image
+    screen.blit(backgroundImg,(0,0))
     for event in pygame.event.get():
         #if X is pressed
         if event.type == pygame.QUIT:
@@ -42,6 +59,11 @@ while running:
                 playerX_change -= 0.3
             if event.key == pygame.K_RIGHT:
                 playerX_change += 0.3
+            if event.key == pygame.K_SPACE:
+                if bullet_state == "ready":
+                    bulletX=playerX
+                    fire_bullet(bulletX,bulletY)
+
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 playerX_change = 0
@@ -69,6 +91,13 @@ while running:
     #change the position of the player
     playerX += playerX_change
 
+    #bullet movement
+    if bulletY <=0 :
+        bulletY=480
+        bullet_state="ready"
+    if bullet_state== "fire"  :
+        fire_bullet(bulletX,bulletY)
+        bulletY -=bulletY_change
 
 
     player(playerX,playerY)
