@@ -1,12 +1,17 @@
 import  pygame,sys
 import math
 import random
+from pygame import mixer
 pygame.init()
 # Create the screen
 screen=pygame.display.set_mode((800,600))
 
 #Background image
 backgroundImg=pygame.image.load("3d-space-scene.jpg")
+
+#Background sound
+mixer.music.load('background.wav')
+mixer.music.play(-1)
 
 #Set Icon and Title
 pygame.display.set_caption("Space Invaders")
@@ -44,6 +49,20 @@ bullet_state= "ready"
 
 #score
 score_value=0
+font=pygame.font.Font('freesansbold.ttf',32)
+textX=10
+textY=10
+
+#Game Over text
+over_font=pygame.font.Font('freesansbold.ttf',64)
+
+def show_score(x,y):
+    score=font.render("Score :"+ str(score_value),True,(255,255,255))
+    screen.blit(score, (x, y))
+
+def game_over_text():
+    over_text = over_font.render("GAME OVER :" + str(score_value), True, (255, 255, 255))
+    screen.blit(over_text, (200,250))
 def player(x,y):
     screen.blit(playerImg,(x,y))
 def enemy(x, y,i):
@@ -74,6 +93,8 @@ while running:
                 playerX_change += 0.3
             if event.key == pygame.K_SPACE:
                 if bullet_state == "ready":
+                    bullet_Sound = mixer.Sound('laser.wav')
+                    bullet_Sound.play()
                     bulletX=playerX
                     fire_bullet(bulletX,bulletY)
 
@@ -130,5 +151,5 @@ while running:
 
 
     player(playerX,playerY)
-    
+    show_score(textX, textY)
     pygame.display.update()
