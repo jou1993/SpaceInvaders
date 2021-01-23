@@ -20,11 +20,19 @@ playerY=480
 playerX_change=0
 
 #enemy
-enemyImg=pygame.image.load("enemy.png")
-enemyX=370
-enemyY=50
-enemyX_change=0.3
-enemyY_change=40
+enemyImg=[]
+enemyX=[]
+enemyY = []
+enemyX_change=[]
+enemyY_change=[]
+num_of_enemies=6
+
+for i in range(num_of_enemies):
+    enemyImg.append(pygame.image.load('enemy.png'))
+    enemyX.append(random.randint(0, 735))
+    enemyY.append(random.randint(50, 150))
+    enemyX_change.append( 0.3)
+    enemyY_change.append(40)
 
 #bullet 
 bulletImg=pygame.image.load("bullet.png")
@@ -38,8 +46,8 @@ bullet_state= "ready"
 score_value=0
 def player(x,y):
     screen.blit(playerImg,(x,y))
-def enemy(x,y):
-    screen.blit(enemyImg,(x,y))
+def enemy(x, y,i):
+    screen.blit(enemyImg[i], (x, y))
 def fire_bullet(x,y):
     global bullet_state
     bullet_state = "fire"
@@ -73,25 +81,34 @@ while running:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 playerX_change = 0
 
-    #Collision
-    collision=isCollision(enemyX,enemyY,bulletX,bulletY)
-    if collision:
-        bulletY=480
-        bullet_state="ready"
-        score_value += 1
-        enemyX = random.randint(0, 735)
-        enemyY = random.randint(50, 150)
-    #enemy movement
-    enemyX += enemyX_change
 
-    if enemyX <=0 :
-        enemyX=0
-        enemyX_change =0.3
-        enemyY += enemyY_change
-    if enemyX >= 736 :
-        enemyX=736
-        enemyX_change = -0.3
-        enemyY += enemyY_change
+    #enemy movement
+    for i in range(num_of_enemies):
+        # Game Over
+        if enemyY[i] > 440:
+            for j in range(num_of_enemies):
+                enemyY[j] = 2000
+            game_over_text()
+            break
+        enemyX[i] += enemyX_change[i]
+        if enemyX[i] <= 0:
+            enemyX[i] = 0
+            enemyX_change[i] = 0.3
+            enemyY[i] += enemyY_change[i]
+        elif enemyX[i] >= 736:
+            enemyX[i] = 736
+            enemyX_change[i] = -0.3
+        # Collision
+        collision = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
+        if collision:
+            explosion_sound = mixer.Sound('explosion.wav')
+            explosion_sound.play()
+            bulletY = 480
+            bullet_state = "ready"
+            score_value += 1
+            enemyX[i] = random.randint(0, 735)
+            enemyY[i] = random.randint(50, 150)
+        enemy(enemyX[i], enemyY[i], i)
 
 
     #Check Boundaries
@@ -113,5 +130,5 @@ while running:
 
 
     player(playerX,playerY)
-    enemy(enemyX,enemyY)
+    
     pygame.display.update()
