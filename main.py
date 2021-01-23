@@ -45,6 +45,12 @@ while running:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 playerX_change = 0
 
+    #Check Boundaries
+    if playerX <=0 :
+        playerX=0
+    if playerX >= 736 :
+        playerX=736
+
     #change the position of the player
     playerX += playerX_change
 
